@@ -1,0 +1,219 @@
+/* Time tracker widget styles.
+   Theme = a small 5-color palette (swap the CSS variables below to re-theme).
+   DM Mono for timers/labels; no pure black. */
+
+:root {
+  /* Theme palette — change these to match your own brand */
+  --ink: #0E0E0C;    /* text */
+  --bone: #F4EFE6;   /* background */
+  --terra: #D4603A;  /* primary / accent */
+  --terra-hover: #bf5433;
+  --jungle: #1F3D2E; /* dark accent */
+  --sand: #E8DFD0;   /* secondary surface */
+  --ink-60: rgba(14, 14, 12, 0.6);
+  --ink-30: rgba(14, 14, 12, 0.3);
+  --ink-12: rgba(14, 14, 12, 0.12);
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-heading: 'Playfair Display', serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--ink);
+  background: var(--bone);
+  display: flex;
+  min-height: 100vh;   /* anchor to the iframe viewport so the card always fills + centers */
+}
+
+/* Full-bleed, responsive: fill the iframe (width + height); content centered. */
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  background: var(--bone);
+  padding: clamp(24px, 5vw, 56px);
+  transition: opacity 150ms ease;
+}
+.controls { display: flex; flex-direction: column; gap: 12px; }
+.card.busy { opacity: 0.55; pointer-events: none; }
+
+
+.eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+  color: var(--terra);
+  margin: 0 0 24px;
+}
+
+/* Timers */
+.timers { display: flex; gap: 24px; margin-bottom: 0; }
+.timer { flex: 1; transition: opacity 150ms ease; }
+.timer-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+  color: var(--ink-60);
+  margin: 0 0 6px;
+}
+.timer-value {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 30px;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.timer-value.muted { color: var(--ink-30); }
+
+/* Actions */
+.actions { display: flex; flex-direction: column; gap: 12px; }
+.card.break-open .actions { display: none; }
+
+/* Buttons hidden by default; JS shows per state (avoids initial flash) */
+#btnCheckIn, #btnBreak, #btnResume, #btnCheckOut, #checkedOutLabel { display: none; }
+
+.btn-primary, .btn-secondary, .btn-ghost {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+  width: 100%;
+}
+.btn-primary {
+  background: var(--terra);
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  padding: 14px 16px;
+}
+.btn-primary:hover { background: var(--terra-hover); }
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink-30);
+  border-radius: 15px;
+  padding: 14px 16px;
+}
+.btn-secondary:hover { background: var(--sand); }
+.btn-primary:active, .btn-secondary:active, .btn-ghost:active { transform: translateY(1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--terra);
+  border: none;
+  padding: 8px 0;
+  letter-spacing: 0.06em;
+}
+
+.checked-out-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: var(--ink-30);
+  text-align: center;
+  padding: 14px 0;
+  margin: 0;
+  border: 1px dashed var(--ink-12);
+  border-radius: 3px;
+  transition: opacity 150ms ease;
+}
+
+/* Break-type chooser */
+.break-panel { display: none; }
+.card.break-open .break-panel { display: block; }
+.break-types { display: flex; gap: 12px; margin-bottom: 12px; }
+.break-types .btn-secondary { flex: 1; width: auto; }
+.note-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--ink-12);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.note-input::placeholder { color: var(--ink-30); }
+
+.status-msg {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-60);
+  margin: 16px 0 0;
+  min-height: 12px;
+  text-align: center;
+}
+
+/* ============================================================
+ * RESPONSIVE REGIMES (driven by the iframe viewport)
+ *   default            → vertical/portrait: stacked, centered
+ *   landscape          → wide rectangle: info | controls side by side
+ *   strip (short)      → single compact row, date hidden, inline controls
+ * ============================================================ */
+
+/* Narrow portrait: stack the two timers so they don't crowd */
+@media (max-width: 320px) and (min-height: 201px) {
+  .timers { flex-direction: column; gap: 14px; }
+}
+
+/* Landscape rectangle: wide enough AND wider than tall, with vertical room.
+   min-width guard keeps mobile (narrow) in portrait even when wider-than-tall. */
+@media (min-width: 640px) and (min-aspect-ratio: 5/4) and (min-height: 201px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(32px, 7vw, 90px);
+  }
+  .info { flex: 0 1 auto; }
+  .controls { flex: 0 0 auto; min-width: 240px; }
+  .status-msg { margin-top: 8px; }
+}
+
+/* Short strip: short height (any width, incl. mobile) → one compact row.
+   Wraps gracefully if it can't fit one line (e.g. working state on a narrow phone). */
+@media (max-height: 200px) {
+  .card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(12px, 3vw, 24px);
+    row-gap: 8px;
+    padding: 10px clamp(16px, 3vw, 36px);
+  }
+  .info { flex: 0 1 auto; }
+  .info .eyebrow { display: none; }
+  .timers { gap: clamp(16px, 4vw, 44px); }
+  .timer-label { font-size: 9px; margin-bottom: 2px; }
+  .timer-value { font-size: clamp(18px, 5vh, 26px); }
+  .controls { flex: 0 0 auto; }
+  .actions { flex-direction: row; gap: 8px; align-items: center; }
+  .actions .btn-primary, .actions .btn-secondary { width: auto; padding: 14px 16px; font-size: 12px; }
+  .checked-out-label { padding: 8px 16px; }
+  .status-msg { display: none; }
+
+  /* break chooser stays compact inline */
+  .card.break-open .break-panel { display: flex; align-items: center; gap: 8px; }
+  .break-panel .eyebrow { display: none; }
+  .break-panel .note-input { display: none; }
+  .break-types { margin-bottom: 0; }
+  .break-types .btn-secondary { padding: 9px 16px; }
+  .break-panel .btn-ghost { width: auto; padding: 8px 12px; }
+}

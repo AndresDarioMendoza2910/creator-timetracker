@@ -1,0 +1,18 @@
+node_modules/
+.env
+.env.local
+.env*.local
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+dist/
+build/
+.cache/
+
+# Catalyst local project link (contains your project/org IDs) — do not commit
+.catalystrc
+.catalyst/
+
+# Local Claude Code settings
+.claude/settings.local.json

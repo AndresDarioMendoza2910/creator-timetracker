@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Tracker</title>
+
+  <!-- Theme fonts (see the palette in main.css) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Zoho Creator Widget JS SDK (v2) -->
+  <script src="https://js.zohostatic.com/creator/widgets/version/2.0/widgetsdk-min.js"></script>
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+  <main class="card" id="card">
+    <div class="info">
+      <p class="eyebrow" id="dateLabel">&nbsp;</p>
+      <div class="timers">
+        <div class="timer" id="workBlock">
+          <p class="timer-label">Work</p>
+          <p class="timer-value" id="workTime">00:00:00</p>
+        </div>
+        <div class="timer">
+          <p class="timer-label" id="breakLabel">Break</p>
+          <p class="timer-value muted" id="breakTime">00:00:00</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="actions" id="actions">
+        <button type="button" class="btn-primary" id="btnCheckIn">Clock In</button>
+        <button type="button" class="btn-primary" id="btnBreak">Go on Break</button>
+        <button type="button" class="btn-primary" id="btnResume">Resume Work</button>
+        <button type="button" class="btn-secondary" id="btnCheckOut">Clock Out</button>
+        <p class="checked-out-label" id="checkedOutLabel">Clocked Out</p>
+      </div>
+
+      <div class="break-panel" id="breakPanel">
+        <p class="eyebrow">Select break type</p>
+        <div class="break-types">
+          <button type="button" class="btn-secondary" data-break="Break">Break</button>
+          <button type="button" class="btn-secondary" data-break="Lunch">Lunch</button>
+        </div>
+        <input type="text" id="breakNote" class="note-input" placeholder="Note (optional)" maxlength="200" />
+        <button type="button" class="btn-ghost" id="breakCancel">Cancel</button>
+      </div>
+
+      <p class="status-msg" id="statusMsg"></p>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
